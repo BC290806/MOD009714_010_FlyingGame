@@ -8,7 +8,7 @@ public class PlaneController : MonoBehaviour
     public float rollSpeed = 50f;
     public float yawSpeed = 20f;
     public float throttleSpeed = 10f;
-    public float maxSpeed = 100f;
+    public float maxSpeed = 1000f;
     public float minSpeed = 10f;
 
     private float throttleInput = 0f;
@@ -40,6 +40,7 @@ public class PlaneController : MonoBehaviour
         ReadInput();
         HandleThrottle();
         HandleFlightControls();
+        
     }
 
     private void ReadInput()
@@ -57,14 +58,25 @@ public class PlaneController : MonoBehaviour
 
     private void HandleFlightControls()
     {
+        float speedModifier;
+        float roll;
+        if (Input.GetKey(KeyCode.Space))
+        {
+            Debug.Log("Space Pressed");
+            roll = (pitchRollInput.x * rollSpeed * Time.deltaTime) * 2;
+            speedModifier = 5;
+        }
+        else
+        {
+            speedModifier = 1;
+            roll = pitchRollInput.x * rollSpeed * Time.deltaTime;
+        }
         float pitch = pitchRollInput.y * pitchSpeed * Time.deltaTime;
-        float roll = pitchRollInput.x * rollSpeed * Time.deltaTime;
         float yaw = yawInput * yawSpeed * Time.deltaTime;
 
         transform.Rotate(Vector3.right, pitch);
         transform.Rotate(Vector3.up, yaw);
         transform.Rotate(Vector3.forward, -roll);
-
-        transform.position += transform.forward * throttleInput * Time.deltaTime;
+        transform.position += (transform.forward * speedModifier * throttleInput) * Time.deltaTime;
     }
 }
