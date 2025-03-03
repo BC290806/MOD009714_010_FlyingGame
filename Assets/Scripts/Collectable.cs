@@ -1,5 +1,7 @@
 using System.Collections;
 using UnityEngine;
+using TMPro;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(AudioSource))]
 [RequireComponent(typeof(BoxCollider))]
@@ -14,6 +16,11 @@ public class Collectable : MonoBehaviour
 
     private Vector3 targetPosition; // Final position to zip toward
 
+    public int startingScore = 0;
+    public ScoreScript scoreSystem;
+
+    [SerializeField] TextMeshProUGUI scoreText;
+
     void Start()
     {
         // Get or add the AudioSource component
@@ -22,6 +29,9 @@ public class Collectable : MonoBehaviour
         {
             audioSource = gameObject.AddComponent<AudioSource>();
         }
+
+        GameObject textObject = GameObject.FindGameObjectWithTag("Score");
+        scoreText = textObject.GetComponent<TextMeshProUGUI>();
 
         // Configure the AudioSource
         audioSource.playOnAwake = false;
@@ -32,13 +42,21 @@ public class Collectable : MonoBehaviour
 
         // Get the object's transform
         objectTransform = transform;
+
+        GameObject EventHandler = GameObject.FindGameObjectWithTag("EventSystem");
+        scoreSystem = EventHandler.GetComponent<ScoreScript>();
+        scoreSystem.score = startingScore;
     }
+
 
     void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("Player"))
         {
             Debug.Log("Player collected the ring!");
+
+            scoreText.text = scoreSystem.score.ToString($"{scoreSystem.score}");
+            scoreSystem.score += 1;
 
             // Play the sound effect
             if (collectSound != null)
@@ -54,7 +72,16 @@ public class Collectable : MonoBehaviour
 
             // Start the zip, shrink, and spin effect
             StartCoroutine(ZipShrinkAndSpin());
+
+
         }
+
+        if (scoreSystem.score >= 10)
+        {
+            scoreSystem.score = 10;
+            SceneManager.LoadScene("Main Menu");
+        }
+
     }
 
     private Vector3 CalculateMeshCentre(Collider collider)
