@@ -76,9 +76,9 @@ public class Collectable : MonoBehaviour
 
         }
 
-        if (scoreSystem.score >= 10)
+        if (scoreSystem.score >= 11)
         {
-            scoreSystem.score = 10;
+            scoreSystem.score = 11;
             SceneManager.LoadScene("Main Menu");
         }
 
