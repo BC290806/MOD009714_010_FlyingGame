@@ -16,4 +16,14 @@ public class MainMenuControllerScript : MonoBehaviour
         Debug.Log("Game Quitted");
         Application.Quit();
     }
+
+    public void ReturnToMenu()
+    {
+        SceneManager.LoadScene("Main Menu");
+    }
+
+    public void ReplayGame()
+    {
+        SceneManager.LoadScene("GameMode");
+    }
 }
